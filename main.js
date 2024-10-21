@@ -41,7 +41,7 @@ async function main() {
     const start = moment(start_str).toDate().getTime();
     const end = moment(end_str).toDate().getTime();
 
-    console.log(`获取 ${start_str} - ${end_str} 的 ${query_event_type} 数据...`);
+    console.log(`\n获取 ${start_str} - ${end_str} 的 ${query_event_type} 数据...`);
 
     let resp = await client.query(start, end, null, query_event_type);
     if (!resp || resp.status_code !== '0') {
@@ -97,7 +97,7 @@ function process_data(events, start, end, query_event_type) {
 
     const file = `./logs/${query_event_type}_${start}_${end}.txt`;
 
-    console.log(`got ${events.length} events, saving to ${file}`);
+    console.log(`\ngot ${events.length} events, saving to ${file}`);
 
     const save_dir = path.dirname(file);
     if (!fs.existsSync(save_dir)) {

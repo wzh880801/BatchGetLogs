@@ -54,6 +54,7 @@ var aeClient = /** @class */ (function () {
         if (!auth || !auth.cookie || !auth.x_kunlun_token) {
             throw new Error('auth info is null');
         }
+        console.log("domain:\t\t" + domain + "\nnamespace:\t" + namespace);
         this.namespace = namespace;
         this.domain = domain;
         this.auth = auth;
