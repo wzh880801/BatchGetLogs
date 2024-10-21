@@ -30,7 +30,7 @@ node main.js --token='123*****' --cookie='X-Kunlun-SessionId=G%3A627e0041ec***'
 ```
 
 ### 方式二 配置 config.js
-```json
+```js
 
 module.exports = {
     "cookie": "X-Kunlun-SessionId=SWS%3A4e7ec4904ba**********************",
