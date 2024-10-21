@@ -68,7 +68,7 @@ export class aeClient {
         }
 
         if (start_timestamp >= end_timestamp) {
-            throw new Error(`time range error. start_timestamp should be smaller end_timestamp.`);
+            throw new Error(`time range error. start_timestamp should be earlier than end_timestamp.`);
         }
 
         let body = {

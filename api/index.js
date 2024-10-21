@@ -107,7 +107,7 @@ var aeClient = /** @class */ (function () {
                             throw new Error("time range error. start_timestamp or end_timestamp is illegal.");
                         }
                         if (start_timestamp >= end_timestamp) {
-                            throw new Error("time range error. start_timestamp should be smaller end_timestamp.");
+                            throw new Error("time range error. start_timestamp should be earlier than end_timestamp.");
                         }
                         body = {
                             "start_timestamp": start_timestamp,
