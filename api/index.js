@@ -78,9 +78,10 @@ var aeClient = /** @class */ (function () {
         return this.parse(event_str);
     };
     aeClient.prototype.query = function (start_timestamp_1, end_timestamp_1, next_cursor_1) {
-        return __awaiter(this, arguments, void 0, function (start_timestamp, end_timestamp, next_cursor, event_type) {
+        return __awaiter(this, arguments, void 0, function (start_timestamp, end_timestamp, next_cursor, event_type, kv_filters) {
             var url, headers, resp;
             if (event_type === void 0) { event_type = 'user_operation_event'; }
+            if (kv_filters === void 0) { kv_filters = []; }
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -90,7 +91,7 @@ var aeClient = /** @class */ (function () {
                             "sec-ch-ua": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"",
                             "x-kunlun-language-code": "2052",
                         };
-                        return [4 /*yield*/, this.get_events(url, headers, start_timestamp, end_timestamp, next_cursor, event_type)];
+                        return [4 /*yield*/, this.get_events(url, headers, start_timestamp, end_timestamp, next_cursor, event_type, kv_filters)];
                     case 1:
                         resp = _a.sent();
                         if (resp.status_code !== '0') {

@@ -45,14 +45,14 @@ export class aeClient {
         return this.parse<IUserOpEventDetail>(event_str);
     }
 
-    async query(start_timestamp: number, end_timestamp: number, next_cursor: string | undefined | null, event_type: EventType = 'user_operation_event'): Promise<IQueryEventsResp> {
+    async query(start_timestamp: number, end_timestamp: number, next_cursor: string | undefined | null, event_type: EventType = 'user_operation_event', kv_filters: IKVFilter[] = []): Promise<IQueryEventsResp> {
         const url = `https://${this.domain}/ae/api/v1/namespaces/${this.namespace}/events/search`;
         const headers = {
             "content-type": "application/json",
             "sec-ch-ua": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"",
             "x-kunlun-language-code": "2052",
         }
-        const resp = await this.get_events(url, headers, start_timestamp, end_timestamp, next_cursor, event_type);
+        const resp = await this.get_events(url, headers, start_timestamp, end_timestamp, next_cursor, event_type, kv_filters);
 
         if (resp.status_code !== '0') {
             console.info(`\n请求错误（${resp.error_msg}），请通过以下方式之一设置身份信息。\n1. 在 config.js 中维护好身份信息\n2. 在环境变量中设置 KUNLUN_COOKIE 和 KUNLUN_TOKEN\n2. 使用带参启动: node main.js --cookie='<cookie_str>' --token='<x_kunlun_token>'\n`);

@@ -45,7 +45,9 @@ async function main() {
 
     const is_download_logs = isHasArg('--logs');
 
-    let resp = await client.query(start, end, null, query_event_type);
+    const kv_filters = [{ "key": "operation_type", "operator": "IS", "values": ["click"], "type": "STRING" }];
+
+    let resp = await client.query(start, end, null, query_event_type, kv_filters);
     if (!resp || resp.status_code !== '0') {
         return;
     }
@@ -56,7 +58,7 @@ async function main() {
         console.log('loading more events...');
         await sleep(2000);
 
-        resp = await client.query(start, end, resp.data.next_cursor, query_event_type);
+        resp = await client.query(start, end, resp.data.next_cursor, query_event_type, kv_filters);
 
         if (resp.data && resp.data.events) {
             await process_data(resp.data, start, end, query_event_type, is_download_logs);
