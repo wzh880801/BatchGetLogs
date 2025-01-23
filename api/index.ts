@@ -2,6 +2,8 @@ import { EventType, IPageLoadEventDetail, IUserOpEventDetail, IWorkflowEventDeta
 
 import * as axios from 'axios';
 
+axios.default.defaults.timeout = 60000;
+
 interface aeAuthInfo {
     cookie: string,
     x_kunlun_token: string

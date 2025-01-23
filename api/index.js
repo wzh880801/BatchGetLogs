@@ -49,6 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.aeClient = void 0;
 var axios = require("axios");
+axios.default.defaults.timeout = 60000;
 var aeClient = /** @class */ (function () {
     function aeClient(namespace, auth, domain) {
         if (domain === void 0) { domain = "apaas.feishuapp.cn"; }

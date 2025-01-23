@@ -12,7 +12,7 @@ const authObj = parseAuthInfo();
 // 「dev 环境」的域名类似这样：apaas-dev24658.aedev.feishuapp.cn
 // const client = new aeClient('galaxy_001__c', authObj, 'apaas.feishuapp.cn');
 // const client = new aeClient('galaxy_001__c', authObj, 'apaas-dev24658.aedev.feishuapp.cn');
-const client = new aeClient('package_7a2002__c', authObj, 'apaas-dev15229.aedev.feishuapp.cn');
+const client = new aeClient('package_7a2002__c', authObj, 'apaas.feishuapp.cn');
 
 
 async function main() {
@@ -117,7 +117,6 @@ async function process_data(resp, start, end, query_event_type, is_download_logs
         // console.log(`${d.page_api_name}\t${d.cost}ms`);
 
         const d = client.parse_user_op_event_detail(e.event_detail);
-        console.log(`${d.start_timestamp}\t${d.page_api_name}\t${d.operation_type}\t${d.component_api_name}\t${resp.context.users[d.operator_uid].name}`);
 
         let logs;
 
@@ -126,9 +125,10 @@ async function process_data(resp, start, end, query_event_type, is_download_logs
         }  
 
         // 保存到本地
-        // 依次为 开始时间 结束时间 事件ID 事件类型 操作人姓名 事件上下文 事件详情 日志详情
+        // 依次为 开始时间 结束时间 事件ID TraceId 事件类型 操作人姓名 事件上下文 事件详情 日志详情
         if ((is_download_logs && logs.length > 0) || !is_download_logs) {
-            fs.appendFileSync(file, `${e.start_timestamp}\t${e.end_timestamp}\t${e.event_id}\t${e.event_type}\t${resp.context.users[d.operator_uid].name}\t${JSON.stringify(resp.context)}\t${JSON.stringify({ ...e, event_detail: JSON.parse(e.event_detail) })}\t${logs ? JSON.stringify(logs) : ''}\n`);
+            console.log(`${d.start_timestamp}\t${d.event_id}\t${d.event_trace_id}\t${d.page_api_name}\t${d.operation_type}\t${d.component_api_name}\t${resp.context.users[d.operator_uid].name}`);
+            fs.appendFileSync(file, `${e.start_timestamp}\t${e.end_timestamp}\t${e.event_id}\t${d.event_trace_id}\t${e.event_type}\t${resp.context.users[d.operator_uid].name}\t${JSON.stringify(resp.context)}\t${JSON.stringify({ ...e, event_detail: JSON.parse(e.event_detail) })}\t${logs ? JSON.stringify(logs) : ''}\n`);
         }
     }
 }
