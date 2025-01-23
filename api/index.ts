@@ -1,4 +1,4 @@
-import { EventType, IPageLoadEventDetail, IUserOpEventDetail, IWorkflowEventDetail, IQueryEventsResp } from "./data";
+import { EventType, IPageLoadEventDetail, IUserOpEventDetail, IWorkflowEventDetail, IQueryEventsResp, IQueryEventLogsResp, IKVFilter } from "./data";
 
 import * as axios from 'axios';
 
@@ -61,7 +61,7 @@ export class aeClient {
         return resp;
     }
 
-    private async get_events(url: string, headers: { [key: string]: string }, start_timestamp: number, end_timestamp: number, next_cursor: string | undefined | null, event_type: EventType = 'user_operation_event'): Promise<IQueryEventsResp> {
+    private async get_events(url: string, headers: { [key: string]: string }, start_timestamp: number, end_timestamp: number, next_cursor: string | undefined | null, event_type: EventType = 'user_operation_event', kv_filters: IKVFilter[] = []): Promise<IQueryEventsResp> {
 
         if (typeof start_timestamp !== typeof 0 || typeof end_timestamp !== typeof 0) {
             throw new Error(`time range error. start_timestamp or end_timestamp is illegal.`);
@@ -71,7 +71,14 @@ export class aeClient {
             throw new Error(`time range error. start_timestamp should be earlier than end_timestamp.`);
         }
 
-        let body = {
+        let body: {
+            start_timestamp: number,
+            end_timestamp: number,
+            event_type: EventType,
+            keyword_filter: object,
+            kv_filters: IKVFilter[],
+            next_cursor?: string
+        } = {
             "start_timestamp": start_timestamp,
             "end_timestamp": end_timestamp,
             "event_type": event_type,
@@ -81,6 +88,9 @@ export class aeClient {
 
         if (next_cursor) {
             body['next_cursor'] = next_cursor;
+        }
+        if (kv_filters && kv_filters.length > 0) {
+            body['kv_filters'] = kv_filters;
         }
 
         const resp = await axios.default({
@@ -98,6 +108,40 @@ export class aeClient {
             },
             data: body
         })
+        return resp.data;
+    }
+
+    async query_process_logs(event_id: string, event_type: EventType, next_cursor: string | undefined | null): Promise<IQueryEventLogsResp> {
+        if (event_type !== 'page_load_event' && event_type !== 'user_operation_event' && event_type !== 'invoke_function_event') {
+            throw new Error(`only support page_load_event、user_operation_event & invoke_function_event. Got ${event_id}`);
+        }
+
+        const url = `https://${this.domain}/ae/api/v1/namespaces/${this.namespace}/events/${event_id}/processlogs`;
+        let body = {
+            "event_id": event_id,
+            "event_type": event_type
+        }
+        if (next_cursor) {
+            body['next_cursor'] = next_cursor;
+        }
+
+        const resp = await axios.default({
+            url,
+            method: 'POST',
+            headers: {
+                "content-type": "application/json",
+                "sec-ch-ua": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"",
+                "x-kunlun-language-code": "2052",
+                "x-kunlun-token": this.auth.x_kunlun_token,
+                "cookie": this.auth.cookie
+            },
+            data: body
+        })
+
+        if (resp.data.status_code !== '0') {
+            console.info(`\n请求错误（${resp.data.error_msg}），请通过以下方式之一设置身份信息。\n1. 在 config.js 中维护好身份信息\n2. 在环境变量中设置 KUNLUN_COOKIE 和 KUNLUN_TOKEN\n2. 使用带参启动: node main.js --cookie='<cookie_str>' --token='<x_kunlun_token>'\n`);
+        }
+
         return resp.data;
     }
 }

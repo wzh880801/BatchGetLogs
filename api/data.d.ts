@@ -160,3 +160,34 @@ export interface ITrace {
     parent_event_id: string | undefined | null;
     event_trace_id: string;
 }
+
+export interface IQueryEventLogsResp {
+    data: ILogRespData;
+    status_code: string;
+    error_msg?: string
+}
+
+export interface ILogRespData {
+    next_cursor: string;
+    has_more: boolean;
+    logs: ILog[];
+    log_from: string;
+    event_id: string;
+}
+
+export interface ILog {
+    event_id: string;
+    id: string;
+    event_type: string;
+    level: string;
+    content: string;
+    timestamp: number;
+    title: string;
+}
+
+export interface IKVFilter {
+    key: string;
+    operator: string;
+    values: string[];
+    type: string;
+}
